@@ -1,0 +1,141 @@
+<html>
+  <!DOCTYPE html>
+  <html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://kit.fontawesome.com/94c359418c.js" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+      .report {
+        border: 1px solid black;
+        margin: 5px;
+        padding: 5px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Daily Report </h1>
+    <form id="create-form">
+        <label for="date" class="date" >Date:</label><br>
+        <input type="date" id="date" max_length="255" required><br>
+        <h3 class="title">Progress</h3>
+        <div id="progress-container"></div>
+        <textarea type="text" id="progress" max_length="255" required ></textarea>
+       
+        
+        <h3 class="title">Problems</h3>
+        <div id="problems-container"></div>
+        <textarea type="text" id="problems" max_length="255" required></textarea>
+        
+        <h3 class="title">Plan</h3>
+        <div id="plan-container"></div>
+        <textarea type="text" id="plan" ></textarea>
+        
+        <br><br>
+        <input type="submit" value="Create Report" id="submit" onclick="submitData()" required >
+      </form>
+
+
+  <div class="reports" id="reports">
+
+
+
+  </div>
+      
+   
+
+    <br><br>
+    <script>
+     
+      
+      function submitData() {
+    
+
+        var Progress = document.getElementById('progress').value;
+        var Problems= document.getElementById('problems').value;
+        var Plan = document.getElementById('plan').value;
+        var Date = document.getElementById('date').value;
+            
+
+
+        const  data  ={  Progress, Plan, Problems, Date }
+        
+        const jsonData = localStorage.getItem("userData"); 
+        let userData = [];
+        if (jsonData) {
+        userData = JSON.parse(jsonData);
+      }
+       userData.push(data);
+       const newJsonData = JSON.stringify(userData);
+       localStorage.setItem("userData", newJsonData);
+
+       displayData();
+    }
+    
+    function removeData(index) {
+      // Retrieve the existing data from local storage
+      const jsonData = localStorage.getItem("userData");
+      let userData = [];
+      if (jsonData) {
+        userData = JSON.parse(jsonData);
+      }
+
+      // Remove the data at the specified index
+      userData.splice(index, 1);
+
+      // Convert the array to a JSON string
+      const newJsonData = JSON.stringify(userData);
+
+      // Save the JSON string in local storage
+      localStorage.setItem("userData", newJsonData);
+
+      // Call the displayData function to display the updated data
+      displayData();
+    }
+
+
+    function displayData() {
+      const jsonData = localStorage.getItem("userData");
+      if (!jsonData) {
+        return;
+      }
+
+      const userData = JSON.parse(jsonData);
+
+      let html = "";
+      for (let i = 0; i < userData.length; i++) {
+        html += `
+
+        <div class="report" >
+ 
+          <h2>Reported on ${userData[i].Date}</h2>
+          <h2>Progress:</h2> <p>${userData[i].Progress}</p>
+          <h2>Problems:</h2> <p>${userData[i].Problems}</p>
+          <h2>Plan:</h2> <p>${userData[i].Plan}</p>
+          <button onclick="removeData(${i})" value="Delete">Delete</button>
+          
+         
+
+        </div>
+         
+        `;
+      }
+
+
+      document.getElementById("reports").innerHTML = html;
+      
+
+        }
+
+        displayData();
+
+
+       
+
+
+
+    </script>
+  </body>
+</html>
